@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ты - Моё Всё</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='24' font-size='24'>💕</text></svg>" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a0a2e 0%, #4a1a4a 50%, #8b2a5c 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 40px;
+        }
+
+        .heart {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .heart svg {
+            width: 100%;
+            height: 100%;
+            fill: url(#heartGradient);
+            filter: drop-shadow(0 0 30px rgba(255, 100, 150, 0.6));
+        }
+
+        .heart-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 100, 150, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(255, 150, 200, 0.5);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            color: rgba(255, 220, 230, 0.9);
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .love-text {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: rgba(255, 240, 245, 0.85);
+            text-align: center;
+            max-width: 700px;
+            line-height: 2;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .love-text p {
+            margin-bottom: 20px;
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 150, 200, 0.6);
+            font-size: 20px;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .btn-love {
+            margin-top: 50px;
+            padding: 15px 50px;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(255, 100, 150, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .btn-love:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(255, 100, 150, 0.6);
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .eyes-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .eternal-promise {
+            border-left: 3px solid #ff6b9d;
+            padding-left: 20px;
+            font-style: italic;
+            color: #ffb7c5;
+        }
+
+        .proposal-section {
+            margin-top: 60px;
+            padding: 50px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 107, 157, 0.1) 100%);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .ring-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+        }
+
+        .ring {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            animation: float-ring 3s ease-in-out infinite;
+        }
+
+        @keyframes float-ring {
+            0%, 100% { transform: translateY(0) rotateY(0deg); }
+            50% { transform: translateY(-15px) rotateY(10deg); }
+        }
+
+        .diamond {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            animation: diamond-sparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes diamond-sparkle {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)); transform: translate(-50%, -50%) scale(1); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 255, 255, 1)); transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .ring-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .proposal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .proposal-text {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: rgba(255, 240, 245, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .proposal-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-proposal {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-family: 'Playfair Display', serif;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            color: #4a1a4a;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-absolute-yes {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-proposal:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+        }
+
+        .proposal-answer {
+            margin-top: 30px;
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            opacity: 0;
+            min-height: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .heart-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .heart-glow {
+                width: 200px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <div class="container">
+        <div class="heart-container">
+            <div class="heart-glow"></div>
+            <div class="heart">
+                <svg viewBox="0 0 32 29.6">
+                    <defs>
+                        <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d"/>
+                            <stop offset="50%" style="stop-color:#ff8fab"/>
+                            <stop offset="100%" style="stop-color:#c44569"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
+                    c6.1-9.3,16-11.8,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+                </svg>
+            </div>
+        </div>
+        
+        <h1 class="title">Ты - Моё Всё</h1>
+        <p class="subtitle">Моя любовь к тебе бесконечна, как звёздное небо</p>
+        
+        <div class="love-text" id="loveText">
+            <p>Каждое мгновение с тобой — это подарок судьбы.</p>
+            <p>Твоя улыбка освещает мой мир ярче тысячи солнц.</p>
+            <p>Ты самое прекрасное, что случилось в моей жизни.</p>
+            <p class="eyes-text">Твои глаза — самые красивые на свете. В них я вижу всю бесконечность вселенной и всю любовь, которую только можно представить.</p>
+            <p class="eternal-promise">Неважно, что случится — сегодня, завтра или через много лет. Я буду любить тебя всегда. Это моя клятва, моя судьба, моя правда.</p>
+        </div>
+        
+        <!-- Proposal Section -->
+        <div class="proposal-section" id="proposalSection">
+            <div class="ring-container">
+                <div class="ring">
+                    <div class="diamond">💎</div>
+                    <div class="band"></div>
+                </div>
+                <div class="ring-glow"></div>
+            </div>
+            <h2 class="proposal-title">Ты станешь моей женой?</h2>
+            <p class="proposal-text">Я хочу провести с тобой всю жизнь. Быть рядом каждое утро и каждую ночь. Любить тебя всё сильнее с каждым днём.</p>
+            <div class="proposal-buttons">
+                <button class="btn-proposal btn-yes" id="btnYes">Да, с радостью! 💍</button>
+                <button class="btn-proposal btn-absolute-yes" id="btnAbsoluteYes">Да, тысячу раз ДА! 💖</button>
+            </div>
+            <div class="proposal-answer" id="proposalAnswer"></div>
+        </div>
+        
+        <button class="btn-love" id="loveBtn">Нажми, чтобы узнать секрет</button>
+    </div>
+
+    <script>
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.opacity = Math.random() * 0.8 + 0.2;
+            starsContainer.appendChild(star);
+        }
+
+        // Create floating hearts
+        const floatingContainer = document.getElementById('floatingHearts');
+        const heartEmojis = ['💕', '💖', '💗', '💓', '💝', '🌸', '✨'];
+        
+        for (let i = 0; i < 20; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 5 + 8) + 's';
+            heart.style.animationDelay = Math.random() * 8 + 's';
+            heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+            floatingContainer.appendChild(heart);
+        }
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Heart pulse animation
+        gsap.to('.heart', {
+            scale: 1.1,
+            duration: 0.8,
+            repeat: -1,
+            yoyo: true,
+            ease: 'power2.inOut'
+        });
+
+        // Glow pulse
+        gsap.to('.heart-glow', {
+            scale: 1.2,
+            opacity: 0.5,
+            duration: 1.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        // Title entrance
+        gsap.from('.title', {
+            opacity: 0,
+            y: -50,
+            duration: 1.5,
+            ease: 'power3.out',
+            delay: 0.5
+        });
+
+        // Subtitle entrance
+        gsap.from('.subtitle', {
+            opacity: 0,
+            y: 30,
+            duration: 1.2,
+            ease: 'power3.out',
+            delay: 1
+        });
+
+        // Love text reveal
+        gsap.to('#loveText', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power2.out',
+            delay: 1.5
+        });
+
+        // Stagger text paragraphs
+        gsap.from('#loveText p', {
+            opacity: 0,
+            x: -30,
+            duration: 0.8,
+            stagger: 0.3,
+            ease: 'power2.out',
+            delay: 2
+        });
+
+        // Proposal section animation
+        gsap.to('#proposalSection', {
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            delay: 4,
+            ease: 'back.out(1.7)'
+        });
+
+        // Proposal buttons interaction
+        const btnYes = document.getElementById('btnYes');
+        const btnAbsoluteYes = document.getElementById('btnAbsoluteYes');
+        const proposalAnswer = document.getElementById('proposalAnswer');
+        let answerShown = false;
+
+        function showAnswer(answer) {
+            if (answerShown) return;
+            answerShown = true;
+            
+            proposalAnswer.textContent = answer;
+            gsap.to(proposalAnswer, {
+                opacity: 1,
+                scale: 1.1,
+                duration: 0.8,
+                ease: 'back.out(1.7)'
+            });
+
+            // Celebration effect
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.style.left = '50%';
+                    sparkle.style.top = '70%';
+                    sparkle.style.background = i % 2 === 0 ? '#ffd700' : '#ff6b9d';
+                    document.body.appendChild(sparkle);
+
+                    const angle = (Math.PI * 2 * i) / 50;
+                    const velocity = Math.random() * 300 + 200;
+
+                    gsap.to(sparkle, {
+                        x: Math.cos(angle) * velocity,
+                        y: Math.sin(angle) * velocity,
+                        opacity: 0,
+                        scale: Math.random() * 2 + 1,
+                        duration: 1.5,
+                        ease: 'power2.out',
+                        onComplete: () => sparkle.remove()
+                    });
+                }, i * 30);
+            }
+        }
+
+        btnYes.addEventListener('click', () => showAnswer('Ты сделала меня самым счастливым человеком на свете! 💍✨'));
+        btnAbsoluteYes.addEventListener('click', () => showAnswer('Тысяча ДА! Моя любовь к тебе бесконечна! 💖💎'));
+
+        // Button entrance
+        gsap.to('#loveBtn', {
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            ease: 'back.out(1.7)',
+            delay: 5.5
+        });
+
+        // Sparkle effect on click
+        document.getElementById('loveBtn').addEventListener('click', function(e) {
+            const btn = e.target;
+            const rect = btn.getBoundingClientRect();
+            
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = rect.left + rect.width / 2 + 'px';
+                sparkle.style.top = rect.top + rect.height / 2 + 'px';
+                document.body.appendChild(sparkle);
+                
+                const angle = (Math.PI * 2 * i) / 30;
+                const velocity = Math.random() * 150 + 100;
+                
+                gsap.to(sparkle, {
+                    x: Math.cos(angle) * velocity,
+                    y: Math.sin(angle) * velocity,
+                    opacity: 0,
+                    scale: 0,
+                    duration: 1,
+                    ease: 'power2.out',
+                    onComplete: () => sparkle.remove()
+                });
+            }
+
+            // Reveal secret message
+            gsap.to(btn, {
+                scale: 0.9,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                onComplete: () => {
+                    btn.textContent = 'Ты навсегда в моём сердце! 💕';
+                    gsap.to(btn, {
+                        background: 'linear-gradient(135deg, #ff1493 0%, #ff69b4 100%)',
+                        duration: 0.5
+                    });
+                }
+            });
+        });
+
+        // Mouse parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            
+            gsap.to('.heart-container', {
+                x: x,
+                y: y,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
+        });
+    </script>
+</body>
+</html>
